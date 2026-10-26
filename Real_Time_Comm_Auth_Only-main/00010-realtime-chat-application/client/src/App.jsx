@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { initializeSession } from './features/auth/authSlice.js';
-import LoginPage from './pages/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
-import AccountPage from './pages/AccountPage.jsx';
-import Brand from './components/Brand.jsx';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { initializeSession } from "./features/auth/authSlice.js";
+import LoginPage from "./pages/LoginPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
+import AccountPage from "./pages/AccountPage.jsx";
+import ChatPage from "./pages/ChatPage.jsx";
+import Brand from "./components/Brand.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, error } = useSelector((state) => state.auth);
@@ -29,7 +30,7 @@ export default function App() {
     dispatch(initializeSession());
   }, [dispatch]);
 
-  if (bootstrap === 'failed') {
+  if (bootstrap === "failed") {
     return (
       <main className="session-screen">
         <Brand />
@@ -45,7 +46,7 @@ export default function App() {
     );
   }
 
-  if (bootstrap !== 'ready') {
+  if (bootstrap !== "ready") {
     return (
       <main className="session-screen">
         <Brand />
@@ -54,7 +55,7 @@ export default function App() {
     );
   }
 
-  const homePath = user ? '/account' : '/login';
+  const homePath = user ? "/account" : "/login";
 
   return (
     <Routes>
@@ -66,6 +67,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <AccountPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <ChatPage />
           </ProtectedRoute>
         }
       />

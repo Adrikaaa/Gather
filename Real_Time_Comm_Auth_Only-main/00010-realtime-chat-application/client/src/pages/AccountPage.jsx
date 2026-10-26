@@ -1,16 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { loadProfile, signOut } from '../features/auth/authSlice.js';
-import Brand from '../components/Brand.jsx';
+import { useDispatch, useSelector } from "react-redux";
+import { loadProfile, signOut } from "../features/auth/authSlice.js";
+import Brand from "../components/Brand.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { user, pending, error } = useSelector((state) => state.auth);
-  const firstName = user.name.split(' ')[0];
+  const firstName = user.name.split(" ")[0];
   const initial = user.name.charAt(0).toUpperCase();
   const memberSince = new Date(user.createdAt).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   function handleSignOut() {
@@ -25,7 +28,11 @@ export default function AccountPage() {
     <div className="account-page">
       <header className="account-header">
         <Brand />
-        <button className="secondary-button" onClick={handleSignOut} disabled={pending}>
+        <button
+          className="secondary-button"
+          onClick={handleSignOut}
+          disabled={pending}
+        >
           Sign out <span aria-hidden="true">↗</span>
         </button>
       </header>
@@ -33,8 +40,13 @@ export default function AccountPage() {
         <span className="eyebrow">
           <span className="tiny-dot" /> YOU&apos;RE RIGHT WHERE YOU BELONG
         </span>
-        <h1>Hello, {firstName}<span className="brand-dot">.</span></h1>
-        <p className="account-intro">You&apos;re all set. This is your little corner of Gather.</p>
+        <h1>
+          Hello, {firstName}
+          <span className="brand-dot">.</span>
+        </h1>
+        <p className="account-intro">
+          You&apos;re all set. This is your little corner of Gather.
+        </p>
         <section className="profile-card" aria-labelledby="profile-heading">
           <div className="profile-card-heading">
             <div className="profile-avatar">{initial}</div>
@@ -46,7 +58,9 @@ export default function AccountPage() {
             </div>
           </div>
           {error && (
-            <div className="error-banner" role="alert">{error.message}</div>
+            <div className="error-banner" role="alert">
+              {error.message}
+            </div>
           )}
           <dl>
             <div>
@@ -62,17 +76,21 @@ export default function AccountPage() {
               <dd>{memberSince}</dd>
             </div>
           </dl>
+          <button className="primary-button" onClick={() => navigate("/chat")}>
+            Open chat <span aria-hidden="true">→</span>
+          </button>
           <button
             className="secondary-button profile-refresh"
             disabled={pending}
             onClick={handleRefresh}
           >
-            {pending ? 'One moment...' : 'Refresh profile'}
-            {' '}<span aria-hidden="true">↻</span>
+            {pending ? "One moment..." : "Refresh profile"}{" "}
+            <span aria-hidden="true">↻</span>
           </button>
         </section>
         <p className="account-note">
-          The foundation is here. More connections come next.<br />
+          The foundation is here. More connections come next.
+          <br />
           <span>This version includes account authentication only.</span>
         </p>
       </main>
