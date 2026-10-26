@@ -1,8 +1,13 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     name: {
       type: String,
       required: true,
@@ -17,14 +22,22 @@ const userSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    password: { type: String, required: true, select: false },
+    avatar: String,
+    // Google-only accounts have no password; everyone else must have one.
+    password: {
+      type: String,
+      required() {
+        return !this.googleId;
+      },
+      select: false,
+    },
     refreshToken: { type: String, default: null, select: false },
   },
   { timestamps: true },
 );
 
-userSchema.pre('save', async function () {
-  if (this.isModified('password')) {
+userSchema.pre("save", async function () {
+  if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
@@ -34,4 +47,4 @@ userSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };
 
-export const UserModel = mongoose.model('User', userSchema);
+export const UserModel = mongoose.model("User", userSchema);

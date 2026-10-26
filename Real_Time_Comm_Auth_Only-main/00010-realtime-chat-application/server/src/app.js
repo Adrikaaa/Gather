@@ -5,12 +5,14 @@ import { env } from './config/env.js';
 import { apiRouter } from './routes/index.routes.js';
 import { notFound } from './middleware/notFound.middleware.js';
 import { errorHandler } from './middleware/error.middleware.js';
+import { passport } from './config/passport.js';
 
 export const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser());
+app.use(passport.initialize());
 app.use(morgan(
   env.nodeEnv === 'production' ? 'combined' : 'dev',
   { skip: () => env.nodeEnv === 'test' },

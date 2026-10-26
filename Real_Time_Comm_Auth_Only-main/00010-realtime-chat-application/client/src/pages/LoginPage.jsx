@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { signIn } from '../features/auth/authSlice.js';
 import AuthLayout from '../components/AuthLayout.jsx';
 import FormField from '../components/FormField.jsx';
+import GoogleButton from '../components/GoogleButton.jsx';
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ export default function LoginPage() {
           <span aria-hidden="true">→</span>
         </button>
       </form>
+      <GoogleButton label="Sign in with Google" />
       <p className="alternate-action">
         New around here? <Link to="/register">Create an account</Link>
       </p>

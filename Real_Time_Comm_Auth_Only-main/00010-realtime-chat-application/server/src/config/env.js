@@ -4,7 +4,15 @@ import { fileURLToPath } from 'node:url';
 const envFile = fileURLToPath(new URL('../../.env', import.meta.url));
 dotenv.config({ path: envFile, quiet: true });
 
-const required = ['MONGODB_URI', 'ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
+const required = [
+  'MONGODB_URI',
+  'ACCESS_TOKEN_SECRET',
+  'REFRESH_TOKEN_SECRET',
+  'CLIENT_URL',
+  'GOOGLE_CLIENT_ID',
+  'GOOGLE_CLIENT_SECRET',
+  'GOOGLE_CALLBACK_URL',
+];
 for (const key of required) {
   if (!process.env[key]?.trim()) {
     throw new Error(`Missing required environment variable: ${key}`);
@@ -25,6 +33,11 @@ if (process.env.ACCESS_TOKEN_SECRET === process.env.REFRESH_TOKEN_SECRET) {
 if (!/^mongodb(\+srv)?:\/\//.test(process.env.MONGODB_URI)) {
   throw new Error('MONGODB_URI must be a MongoDB connection URI');
 }
+for (const key of ['CLIENT_URL', 'GOOGLE_CALLBACK_URL']) {
+  if (!URL.canParse(process.env[key])) {
+    throw new Error(`${key} must be a full URL, e.g. http://localhost:5173`);
+  }
+}
 const nodeEnv = process.env.NODE_ENV ?? 'development';
 const port = Number(process.env.PORT ?? 5001);
 
@@ -42,4 +55,8 @@ export const env = Object.freeze({
   mongoUri: process.env.MONGODB_URI,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+  clientUrl: process.env.CLIENT_URL.replace(/\/+$/, ''),
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
 });

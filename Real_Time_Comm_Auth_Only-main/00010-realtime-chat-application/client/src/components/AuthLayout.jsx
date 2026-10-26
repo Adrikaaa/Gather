@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, NavLink, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { clearError } from '../features/auth/authSlice.js';
 import Brand from './Brand.jsx';
 
 export default function AuthLayout({ eyebrow, title, description, children }) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { user, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -16,6 +17,9 @@ export default function AuthLayout({ eyebrow, title, description, children }) {
   let alertMessage = error?.message;
   if (!error && location.state?.sessionExpired) {
     alertMessage = 'Your session has expired. Please sign in again.';
+  } else if (!error && searchParams.get('error') === 'google') {
+    // The server redirects to /login?error=google when Google sign-in fails or is cancelled.
+    alertMessage = 'We couldn’t sign you in with Google. Please try again.';
   }
 
   if (user) {

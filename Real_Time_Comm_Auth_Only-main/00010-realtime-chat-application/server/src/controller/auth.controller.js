@@ -6,6 +6,7 @@ import {
   clearRefreshToken,
 } from '../DAO/user.dao.js';
 import { env } from '../config/env.js';
+import { passport } from '../config/passport.js';
 import { AppError } from '../utils/AppError.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import { issueTokens, verifyToken, isTokenError } from '../utils/jwt.js';
@@ -17,6 +18,7 @@ const cookieOptions = {
   sameSite: 'strict',
   path: '/api/v1/auth',
 };
+const googleFailureUrl = `${env.clientUrl}/login?error=google`;
 
 /** @param {object} user @returns {import('../types/user.js').PublicUser} */
 function toPublicUser(user) {
@@ -63,7 +65,8 @@ export async function register(req, res) {
 export async function login(req, res) {
   const { email, password } = req.body;
   const user = await findUserByEmail(email);
-  if (!user || Buffer.byteLength(password, 'utf8') > 72) {
+  // Google-only accounts have no password, so they cannot use password login.
+  if (!user || !user.password || Buffer.byteLength(password, 'utf8') > 72) {
     throw new AppError(401, 'Invalid credentials');
   }
 
@@ -74,6 +77,31 @@ export async function login(req, res) {
 
   const session = await startSession(res, user);
   sendSuccess(res, 200, 'Login successful', session);
+}
+
+/**
+ * Google redirects here with ?code=. Passport exchanges it and runs the verify callback;
+ * we then start the same refresh-cookie session as password login and send the browser back to React.
+ * Every failure redirects instead of returning JSON, because this is a full-page browser navigation.
+ * @param {object} req @param {object} res @param {Function} next
+ */
+export function googleCallback(req, res, next) {
+  passport.authenticate('google', { session: false }, async (error, user) => {
+    try {
+      if (error) {
+        throw error;
+      }
+      if (!user) {
+        return res.redirect(googleFailureUrl);
+      }
+
+      await startSession(res, user);
+      res.redirect(`${env.clientUrl}/account`);
+    } catch (failure) {
+      console.error('Google sign-in failed:', failure);
+      res.redirect(googleFailureUrl);
+    }
+  })(req, res, next);
 }
 
 /** Rotate an existing cookie session using an atomic token comparison. @param {object} req @param {object} res @throws {AppError} */

@@ -480,6 +480,55 @@ input[aria-invalid="true"] {
   margin-left: 4px;
 }
 
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  color: #98a08f;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e3e6dc;
+}
+
+.google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border: 1px solid #dfe3d8;
+  border-radius: 7px;
+  background: #fcfcf9;
+  color: #263d35;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.google-button:hover {
+  background: #f3f5ee;
+  border-color: #cdd3c4;
+}
+
+.google-button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .form-divider {
   height: 1px;
   background: #e3e6dc;

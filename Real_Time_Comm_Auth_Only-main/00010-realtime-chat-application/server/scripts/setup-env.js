@@ -8,12 +8,16 @@ const content = [
   'MONGODB_URI=mongodb://127.0.0.1:27017/realtime-chat',
   `ACCESS_TOKEN_SECRET=${randomBytes(48).toString('hex')}`,
   `REFRESH_TOKEN_SECRET=${randomBytes(48).toString('hex')}`,
+  'CLIENT_URL=http://localhost:5173',
+  'GOOGLE_CLIENT_ID=',
+  'GOOGLE_CLIENT_SECRET=',
+  'GOOGLE_CALLBACK_URL=http://localhost:5173/api/v1/auth/google/callback',
   '',
 ].join('\n');
 
 try {
   await writeFile(path, content, { flag: 'wx', mode: 0o600 });
-  console.log('Created server/.env with random JWT secrets. Configure MONGODB_URI before starting.');
+  console.log('Created server/.env with random JWT secrets. Configure MONGODB_URI and the Google OAuth keys before starting.');
 } catch (error) {
   if (error.code === 'EEXIST') {
     console.error('server/.env already exists. It was not overwritten.');

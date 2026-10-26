@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { signUp } from '../features/auth/authSlice.js';
 import AuthLayout from '../components/AuthLayout.jsx';
 import FormField from '../components/FormField.jsx';
+import GoogleButton from '../components/GoogleButton.jsx';
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ export default function RegisterPage() {
           <span aria-hidden="true">→</span>
         </button>
       </form>
+      <GoogleButton label="Sign up with Google" />
       <p className="alternate-action">
         Already part of Gather? <Link to="/login">Sign in</Link>
       </p>
